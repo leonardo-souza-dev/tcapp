@@ -152,18 +152,10 @@ function mainController($scope, $http, $scope) {
 
 	$scope.gravarNovaConfiguracao = function(configuracao){
 
-		console.log("*** * * * configuracao * * * ** ");
-		console.log(configuracao);
-
-
         $http.post('/api/gravarNovaConfiguracao', configuracao)
             .success(function(data) {
-            	console.log('RETORNO DO SERVER:');
-            	console.log(data);
             	$scope.novaTarefaEscondida = true;
-                $scope.configuracao = {}; // clear the form so our user is ready to enter another
-                //$scope.sistema.resultadocriacao = data.mensagem;
-				//$scope.sistemas.push(data.objeto.sistema); //atualiza scope com novo sistema adicionado
+                $scope.configuracao = {}; 
             })
             .error(function(data) {
                 console.log('Error: ' + data.mensagem);
@@ -171,19 +163,10 @@ function mainController($scope, $http, $scope) {
 	}
 
 	$scope.verProximoDia = function(){ 
-		console.log('*!*!*!*!*!*!*!*!*!*');
-		console.log('diaInicial');
-		console.log(diaInicial);
-		console.log('dia a consultar');
-		console.log(addDays(diaInicial, 1));
 
 		$scope.tarefasDoDia = $http.post('/api/obterTarefas', {dia: addDays(diaInicial,1)}).then( function successCallback(response){
 				
 				diaInicial = addDays(diaInicial, 1);
-				
-				console.log('<diaInicial>');
-				console.log(diaInicial);
-				console.log('</diaInicial>');
 				
 				$scope.diaAtual = { data: formatarDDMMYYYY(diaInicial) };
 				$scope.proximoDia = { data: formatarDDMMYYYY(addDays(diaInicial,1)) };
@@ -198,20 +181,12 @@ function mainController($scope, $http, $scope) {
 	}
 
 	$scope.verDiaAnterior = function(){ 
-		console.log('*!*!*!*!*!*!*!*!*!*');
-		console.log('diaInicial');
-		console.log(diaInicial);
-		console.log('dia a consultar');
+
 		var diaAConsultar = addDays(diaInicial, -1);
-		console.log(diaAConsultar);
 
 		$scope.tarefasDoDia = $http.post('/api/obterTarefas', {dia: diaAConsultar}).then( function successCallback(response){
 				
 				diaInicial = diaAConsultar;
-				
-				console.log('<diaInicial NO THEN>');
-				console.log(diaInicial);
-				console.log('</diaInicial NO THEN>');
 				
 				$scope.diaAtual = { data: formatarDDMMYYYY(diaInicial) };
 				$scope.proximoDia = { data: formatarDDMMYYYY(addDays(diaInicial, 1)) };

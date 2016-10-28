@@ -18,11 +18,11 @@
 	</head>
 
 	<body ng-controller="mainController" ng-init="novaTarefaEscondida=true">
-		
+		<!--
 		<nav class="light-blue lighten-1" role="navigation" style="background-color: #CCCCCC !important;">
 			<div class="nav-wrapper container">
 				<a id="logo-container" href="#" class="brand-logo" style="font-size:18px" ng-click="home()">tcapp</a>
-		<!--		<ul class="right hide-on-med-and-down">
+				<ul class="right hide-on-med-and-down">
 					<li><a href="index.html">Home</a></li>
 					<li><a href="#" ng-click="novaTarefa()">Nova tarefa</a></li>
 				</ul>
@@ -32,9 +32,9 @@
 			    </ul>
 				<a href="#" data-activates="nav-mobile" class="button-collapse">
 					<i class="material-icons">menu</i>
-				</a>-->
+				</a>
 			</div>
-		</nav>
+		</nav>-->
 		
 		<div class="fixed-action-btn" style="bottom: 24px; right: 24px;" ng-show="novaTarefaEscondida">
 			<a class="btn-floating btn-large waves-effect waves-light blue" ng-click="novaTarefa()" ><i class="material-icons">add</i></a>
@@ -81,13 +81,13 @@
 
 						<h6>Titulo</h6>
 						<select class="browser-default" ng-model="configuracao.titulo">
-							<option value="titulo">--Escolha o título--</option>
+							<option value="titulo">--Título--</option>
 							<option ng-repeat="tit in titulos" value="{{tit.tituloId}}">{{tit.descricao}}</option>
 						</select>
 
 						<h6>Recorrencia</h6>
 						<select class="browser-default" ng-change="atualizaInicio()" ng-model="configuracao.recorrencia">
-							<option value="titulo">--Escolha a recorrencia--</option>
+							<option value="titulo">--Recorrencia--</option>
 							<option ng-repeat="rec in recorrencias" value="{{rec.recorrenciaId}}">{{rec.descricao}}</option>
 						</select>
 
@@ -107,7 +107,7 @@
 						</div>
 						-->
 						<select class="browser-default" ng-model="configuracao.inicio">
-							<option value="titulo">--Escolha quando começa--</option>
+							<option value="titulo">--Quando começa--</option>
 							<option ng-repeat="com in comecos" value="{{com.id}}">{{com.descricao}}</option>
 						</select>
 						
