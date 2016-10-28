@@ -160,51 +160,93 @@ app.get('/api/obterConfiguracoes', function (req, res)  {
 
 app.post('/api/obterTarefas', function (req, res) {
 
-    var pDia = req.body.dia;
+    var rDia = req.body.dia;
+	var pDia = new Date(rDia);
+	
+	console.log('pDia');
+	console.log(pDia);
+	
+	var tarefas = [];
+	var tarefasConcluidas = [];
+	var tarefasMerge = [];
+	
+	async.series([
+		function primera (callback) {
 
-    Configuracao
-        .findAll({ include: [ Titulo, Recorrencia ] })
-        .then( function (configs) {
+								Configuracao
+									.findAll({ include: [ Titulo, Recorrencia ] })
+									.then( function (configs) {
 
-            var dia = new Date(pDia);
-            var diaAno = dia.getFullYear();
-            var diaMes = dia.getMonth() + 1;
-            var diaDia = dia.getDate();
-            var diaDiaDeSemana = dia.getDay();
+										
+										var diaAno = pDia.getFullYear();
+										var diaMes = pDia.getMonth() + 1;
+										var diaDia = pDia.getDate();
+										var diaDiaDeSemana = pDia.getDay();
 
-            var tarefas = Enumerable.from(configs)
-                .where(function (x) {
-					
-					console.log('****************');
-					console.log('JSON.stringify(x)');
-					console.log(JSON.stringify(x));
-					console.log('****************');
-					console.log('');
-					
-                    var ta = x.inicioGet.getFullYear();
-                    var tm = x.inicioGet.getMonth() + 1;
-                    var td = x.inicioGet.getDate();
-                    var ts = x.inicioGet.getDay();
+										tarefas = Enumerable.from(configs)
+											.where(function (x) {
+												console.log('****************');console.log('JSON.stringify(x)');console.log(JSON.stringify(x));console.log('****************');console.log('');
+												var ta = x.inicioGet.getFullYear();
+												var tm = x.inicioGet.getMonth() + 1;
+												var td = x.inicioGet.getDate();
+												var ts = x.inicioGet.getDay();
+												var dataDaTarefaEhExatamenteHoje = diaAno == ta && diaMes == tm && diaDia == td;
+												var tarefaJaIniciou = x.inicioGet <= pDia;
+												var mesmoDiaDaSemana = ts == diaDiaDeSemana;
+												var diaDoMesEhIgualHoje = td == diaDia;
+												var tarefasLambda =
+													(x.RecorrenciaId == 1 && dataDaTarefaEhExatamenteHoje) ||
+													(x.RecorrenciaId == 2 && tarefaJaIniciou) ||
+													(x.RecorrenciaId == 3 && tarefaJaIniciou && mesmoDiaDaSemana) ||
+													(x.RecorrenciaId == 4 && tarefaJaIniciou && diaDoMesEhIgualHoje);
+													
+												return tarefasLambda; 
+											})
+											.select("val,i=>{ configuracaoId: val.configuracaoId, descricao: val.titulo.descricao, recorrencia: val.recorrencium.descricao, Index:i, tudo: val }")
+											.toArray();		
+											
+										console.log('-----------------> tarefas');								
+										console.log(JSON.stringify(tarefas));
+										
+										callback();
+									});
+		},
+		function segunda (callback){
 
-                    var dataDaTarefaEhExatamenteHoje = diaAno == ta && diaMes == tm && diaDia == td;
-                    var tarefaJaIniciou = x.inicioGet <= dia;
-                    var mesmoDiaDaSemana = ts == diaDiaDeSemana;
-                    var diaDoMesEhIgualHoje = td == diaDia;
+								TarefaConcluida
+									.findAll( /*{ where: { dataConclusao: pDia } } */ )
+									.then( function (tcs) {
+										
+										console.log('******* TarefaConcluida *********');
+										console.log('JSON.stringify(tcs)');
+										console.log(JSON.stringify(tcs));
+										console.log('******* TarefaConcluida *********');
+										console.log('');
+										
+										tarefasConcluidas = tcs;
+										
+										callback();
+									});
+		},
+		function terceira (callback){
 
-                    var tarefass =
-                        (x.RecorrenciaId == 1 && dataDaTarefaEhExatamenteHoje) ||
-                        (x.RecorrenciaId == 2 && tarefaJaIniciou) ||
-                        (x.RecorrenciaId == 3 && tarefaJaIniciou && mesmoDiaDaSemana) ||
-                        (x.RecorrenciaId == 4 && tarefaJaIniciou && diaDoMesEhIgualHoje);
-
-                    return tarefass; 
-
-                })
-                .select("val,i=>{ configuracaoId: val.configuracaoId, descricao: val.titulo.descricao, recorrencia: val.recorrencium.descricao, Index:i, tudo: val }")
-                .toArray();
-            
-            res.json({ sucesso: true, mensagem: "ok", objeto: { tarefas: tarefas } });
-        });
+								for(i = 0; i < tarefas.length; i++) {
+									for(j = 0; j < tarefasConcluidas.length; j++) {
+										if (tarefas[i].configuracaoId === tarefasConcluidas[j].configuracaoId) {
+											tarefas[i].concluida = true;
+										} else {
+											tarefas[i].concluida = false;
+										}												
+									}
+								}
+										
+								callback();
+		}
+	], function(err) { 
+		if (err != null) return res.status(500).send(err);
+			
+        res.json({ success: true, message: 'tarefas obtidas', objeto: { tarefas: tarefas }});
+    });
 });
 
 app.get('/api/obterTitulos', function (req, res) {

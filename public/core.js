@@ -60,9 +60,9 @@ function obterTarefass(d){
 	var qtd = tarefasDb.length;
 
 	for(i = 0; i < qtd; i++){
-		if (tarefasDb[i].TarefaConcluida == 1) {
+		if (tarefasDb[i].concluida == true) {
 			tarefasDb[i].estilo = estiloTarefaConcluida;
-		} else if (tarefasDb[i].TarefaConcluida == 0) {
+		} else if (tarefasDb[i].concluida == false) {
 			tarefasDb[i].estilo = estiloTarefaNaoConcluida;
 		} 
 		tarefas.push(tarefasDb[i]);
@@ -84,20 +84,19 @@ function mainController($scope, $http, $scope) {
         console.log(response);
 	});
 
-
-
-
+	
+	
 	$scope.diaAtual = { data: formatarDDMMYYYY(diaInicial) };
-
-
-
+	
+	
 	
 	$scope.diaAnterior = { data: formatarDDMMYYYY(addDays(diaInicial, -1)) };
+	
+	
 	
 	$scope.proximoDia = { data: formatarDDMMYYYY(addDays(diaInicial,1)) };
 
 	
-
 
 	$scope.titulos = $http.get('/api/obterTitulos').then(function successCallback(response){
 		
@@ -107,8 +106,6 @@ function mainController($scope, $http, $scope) {
         console.log('ERRO');
         console.log(response);
 	});
-
-
 
 
 
@@ -123,12 +120,12 @@ function mainController($scope, $http, $scope) {
 
 
 
-
-
 	$scope.novaTarefa = function() {
 
 		$scope.novaTarefaEscondida = !$scope.novaTarefaEscondida;
 	}
+	
+	
 
 	$scope.home = function() {
 
@@ -139,14 +136,14 @@ function mainController($scope, $http, $scope) {
 
 
 
-
 	$scope.comecos = [ { id: '1', descricao:'Hoje' }, { id: 2, descricao: 'Amanhã' }, { id: 3, descricao: 'Depois de Amanhã' }];
+	
+	
 	
 	$scope.atualizaInicio = function(){
 
 		$scope.comecos = [ { id: '1', descricao:'Hoje' }, { id: 2, descricao: 'Amanhã' }, { id: 3, descricao: 'Depois de Amanhã' }];
 	}
-
 
 
 
@@ -161,17 +158,26 @@ function mainController($scope, $http, $scope) {
                 console.log('Error: ' + data.mensagem);
             });
 	}
+	
+	
 
 	$scope.verProximoDia = function(){ 
+	
+		var mDia = addDays(diaInicial,1);
+		console.log('mDia');
+		console.log(mDia);
 
-		$scope.tarefasDoDia = $http.post('/api/obterTarefas', {dia: addDays(diaInicial,1)}).then( function successCallback(response){
+		$scope.tarefasDoDia = $http.post('/api/obterTarefas', {dia: mDia}).then( function successCallback(response){
 				
 				diaInicial = addDays(diaInicial, 1);
 				
 				$scope.diaAtual = { data: formatarDDMMYYYY(diaInicial) };
 				$scope.proximoDia = { data: formatarDDMMYYYY(addDays(diaInicial,1)) };
 				$scope.diaAnterior = { data: formatarDDMMYYYY(addDays(diaInicial, -1)) };
-
+				
+				console.log('!!!!!!!!!!!!!!');
+				console.log(response.data.objeto.tarefas);
+				
 				return obterTarefass(response.data.objeto.tarefas);
 
 			}, function errorCallback(response){
@@ -179,6 +185,8 @@ function mainController($scope, $http, $scope) {
 		        console.log(response);
 			});
 	}
+	
+	
 
 	$scope.verDiaAnterior = function(){ 
 
@@ -191,6 +199,9 @@ function mainController($scope, $http, $scope) {
 				$scope.diaAtual = { data: formatarDDMMYYYY(diaInicial) };
 				$scope.proximoDia = { data: formatarDDMMYYYY(addDays(diaInicial, 1)) };
 				$scope.diaAnterior = { data: formatarDDMMYYYY(addDays(diaInicial, -1)) };
+				
+				console.log('!!!!!!!!!!!!!!');
+				console.log(response.data.objeto.tarefas);
 
 				return obterTarefass(response.data.objeto.tarefas);
 
@@ -199,6 +210,8 @@ function mainController($scope, $http, $scope) {
 		        console.log(response);
 			});
 	}
+	
+	
 
 	$scope.concluirTarefa = function(tarefa) {
 
@@ -220,6 +233,8 @@ function mainController($scope, $http, $scope) {
 			tarefa.estaConcluida = false;
 			tarefa.estilo = estiloTarefaNaoConcluida;
 		}
-
 	}
+	
+	
+	
 }
