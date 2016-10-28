@@ -130,6 +130,13 @@ function mainController($scope, $http, $scope) {
 		$scope.novaTarefaEscondida = !$scope.novaTarefaEscondida;
 	}
 
+	$scope.home = function() {
+
+		if (!$scope.novaTarefaEscondida) {
+			$scope.novaTarefaEscondida = true;
+		}
+	}
+
 
 
 
@@ -153,8 +160,8 @@ function mainController($scope, $http, $scope) {
             .success(function(data) {
             	console.log('RETORNO DO SERVER:');
             	console.log(data);
-            	$scope.novaTarefaEscondida = !$scope.novaTarefaEscondida;
-                //$scope.sistema = {}; // clear the form so our user is ready to enter another
+            	$scope.novaTarefaEscondida = true;
+                $scope.configuracao = {}; // clear the form so our user is ready to enter another
                 //$scope.sistema.resultadocriacao = data.mensagem;
 				//$scope.sistemas.push(data.objeto.sistema); //atualiza scope com novo sistema adicionado
             })
