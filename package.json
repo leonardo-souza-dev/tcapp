@@ -1,0 +1,17 @@
+{
+  "name": "tcapp",
+  "version": "0.0.1",
+  "description": "tcapp",
+  "main": "server.js",
+  "author": "Leonardo Serra",
+  "dependencies": {
+    "async": "^2.1.1",
+    "body-parser": "^1.15.2",
+    "express": "^4.14.0",
+    "method-override": "^2.3.6",
+    "mongoose": "^4.5.3",
+    "morgan": "^1.7.0",
+    "mysql": "^2.11.1",
+    "sequelize": "^3.24.4"
+  }
+}
