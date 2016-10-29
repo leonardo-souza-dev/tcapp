@@ -219,7 +219,7 @@ function mainController($scope, $http, $scope) {
 			tarefa.estaConcluida = true;
 			tarefa.estilo = estiloTarefaConcluida;
 
-	        $http.post('/api/concluirTarefa', tarefa)
+	        $http.post('/api/concluirTarefa', {configuracaoId: tarefa.configuracaoId})
 	            .success(function(data) {
 	                $scope.sistema = {}; 
 	                $scope.sistema.resultadocriacao = data.mensagem;

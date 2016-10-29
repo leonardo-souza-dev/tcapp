@@ -32,14 +32,23 @@ var sequelize = new Sequelize(connStr,   {
 });
 
 //utils
-function obterAno(anoStr){
-    return anoStr.substring(0,4);
+function obterAno(data){
+    return data.substring(0,4);
 }
-function obterMes(anoStr){
-    return anoStr.substring(5,7);
+function obterMes(data){
+    return data.substring(5,7);
 }
-function obterDia(anoStr){
-    return anoStr.substring(8,10);
+function obterDia(data){
+    return data.substring(8,10);
+}
+function formatarYYYYMMDD(dateFieldValue){
+
+	var year = dateFieldValue.getFullYear()+"";
+	var month = (dateFieldValue.getMonth()+1)+"";
+	var day = dateFieldValue.getDate()+"";
+	var dateFormat = year + "-" + month + "-" + day;
+
+	return dateFormat;
 }
 
 var Recorrencia = sequelize.define('recorrencia', {
@@ -163,15 +172,12 @@ app.post('/api/obterTarefas', function (req, res) {
     var rDia = req.body.dia;
 	var pDia = new Date(rDia);
 	
-	console.log('pDia');
-	console.log(pDia);
-	
 	var tarefas = [];
 	var tarefasConcluidas = [];
 	var tarefasMerge = [];
 	
 	async.series([
-		function primeira (callback) {
+		function configuracaoFn (callback) {
 
 			Configuracao
 				.findAll({ include: [ Titulo, Recorrencia ] })
@@ -208,46 +214,61 @@ app.post('/api/obterTarefas', function (req, res) {
 					callback();
 				});
 		},
-		function segunda (callback) {
+		function tarefasConcluidasFn (callback) {
 
-								TarefaConcluida
-									//.findAll( { where: { dataConclusao: new Date('2016-10-29') } }  )
-									.findAll( { 
-										where: 
-											sequelize.where(
-												sequelize.fn('date', sequelize.col('DataConclusao')), 
-												new Date('2016-10-29')) }  )
-									.then( function (tcs) {
+			TarefaConcluida
+				//.findAll( { where: { dataConclusao: new Date('2016-10-29') } }  )
+				.findAll( { 
+					where: 
+						sequelize.where(
+							sequelize.fn('date', sequelize.col('DataConclusao')), 
+							formatarYYYYMMDD(pDia)) }  )
+				.then( function (tcs) {
 
-										console.log('tcs');
-										console.log(JSON.stringify(tcs));
-										console.log('');
-										
-										tarefasConcluidas = tcs;
-										
-										callback();
-									});
+					console.log('tcs');
+					console.log(JSON.stringify(tcs));
+					console.log('');
+					
+					tarefasConcluidas = tcs;
+					
+					callback();
+				});
 		},
-		function terceira (callback) {
+		function mergeFn (callback) {
 
-								for(i = 0; i < tarefas.length; i++) {
-									for(j = 0; j < tarefasConcluidas.length; j++) {
-										console.log('88888888888888888');
-										console.log(tarefas[i].configuracaoId);
-										console.log(tarefasConcluidas[j].configuracaoId);
-										console.log('88888888888888888');
-										if (tarefas[i].configuracaoId === tarefasConcluidas[j].configuracaoId) {
-											tarefas[i].concluida = true;
-										} else {
-											tarefas[i].concluida = false;
-										}												
-									}
-									console.log('tarefas[i]');
-									console.log(JSON.stringify(tarefas[i]));
-									console.log('');
-								}
-										
-								callback();
+			for(i = 0; i < tarefas.length; i++) {
+
+				// console.log('##############');
+				// console.log('i');
+				// console.log(i);
+				// console.log(JSON.stringify(tarefas[i]));
+				// console.log('');
+
+				var mConcluida = true;
+
+				for(j = 0; j < tarefasConcluidas.length; j++) {
+
+					// console.log('------------');
+					// console.log('j');
+					// console.log(j);
+					// console.log(JSON.stringify(tarefasConcluidas[j]));
+					// console.log('');
+
+					if (tarefas[i].configuracaoId === tarefasConcluidas[j].configuracaoId) {
+						console.log('tarefa configuracaoId #' + tarefas[i].configuracaoId + ' esta concluida');
+						//tarefas[i].concluida = true;
+					} else {
+						console.log('tarefa configuracaoId #' + tarefas[i].configuracaoId + ' nao esta concluida');
+						mConcluida = mConcluida && false;
+						//tarefas[i].concluida = false;
+					}
+				}
+				tarefas[i].concluida = mConcluida;
+				console.log('77777777777777777');
+				console.log(JSON.stringify(tarefas[i]));
+			}
+					
+			callback();
 		}
 	], function(err) { 
 		if (err != null) return res.status(500).send(err);
@@ -285,6 +306,17 @@ app.get('/api/obterTitulosTarefas', function (req, res) {
 });
 
 app.post('/api/concluirTarefa', function (req, res) {
+	console.log(req.body);
+	var mConfiguracaoId = req.body.configuracaoId;
+	TarefaConcluida.create({ 
+		configuracaoId: mConfiguracaoId, 
+		dataConclusao: new Date() }).then(function(tarefaConcluida) {
+		console.log('tarefa concluida');
+		console.log(JSON.stringify(tarefaConcluida));
+	});
+});
+
+app.post('/api/concluirTarefa2', function (req, res) {
     console.log('concluirTarefa');
 
     var configuracaoId = req.body.ConfigId;
