@@ -171,56 +171,56 @@ app.post('/api/obterTarefas', function (req, res) {
 	var tarefasMerge = [];
 	
 	async.series([
-		function primera (callback) {
+		function primeira (callback) {
 
-								Configuracao
-									.findAll({ include: [ Titulo, Recorrencia ] })
-									.then( function (configs) {
+			Configuracao
+				.findAll({ include: [ Titulo, Recorrencia ] })
+				.then( function (configs) {
 
-										
-										var diaAno = pDia.getFullYear();
-										var diaMes = pDia.getMonth() + 1;
-										var diaDia = pDia.getDate();
-										var diaDiaDeSemana = pDia.getDay();
+					
+					var diaAno = pDia.getFullYear();
+					var diaMes = pDia.getMonth() + 1;
+					var diaDia = pDia.getDate();
+					var diaDiaDeSemana = pDia.getDay();
 
-										tarefas = Enumerable.from(configs)
-											.where(function (x) {
-												console.log('****************');console.log('JSON.stringify(x)');console.log(JSON.stringify(x));console.log('****************');console.log('');
-												var ta = x.inicioGet.getFullYear();
-												var tm = x.inicioGet.getMonth() + 1;
-												var td = x.inicioGet.getDate();
-												var ts = x.inicioGet.getDay();
-												var dataDaTarefaEhExatamenteHoje = diaAno == ta && diaMes == tm && diaDia == td;
-												var tarefaJaIniciou = x.inicioGet <= pDia;
-												var mesmoDiaDaSemana = ts == diaDiaDeSemana;
-												var diaDoMesEhIgualHoje = td == diaDia;
-												var tarefasLambda =
-													(x.RecorrenciaId == 1 && dataDaTarefaEhExatamenteHoje) ||
-													(x.RecorrenciaId == 2 && tarefaJaIniciou) ||
-													(x.RecorrenciaId == 3 && tarefaJaIniciou && mesmoDiaDaSemana) ||
-													(x.RecorrenciaId == 4 && tarefaJaIniciou && diaDoMesEhIgualHoje);
-													
-												return tarefasLambda; 
-											})
-											.select("val,i=>{ configuracaoId: val.configuracaoId, descricao: val.titulo.descricao, recorrencia: val.recorrencium.descricao, Index:i, tudo: val }")
-											.toArray();		
-											
-										console.log('-----------------> tarefas');								
-										console.log(JSON.stringify(tarefas));
-										
-										callback();
-									});
+					tarefas = Enumerable.from(configs)
+						.where(function (x) {
+							//console.log('****************');console.log('JSON.stringify(x)');console.log(JSON.stringify(x));console.log('****************');console.log('');
+							var ta = x.inicioGet.getFullYear();
+							var tm = x.inicioGet.getMonth() + 1;
+							var td = x.inicioGet.getDate();
+							var ts = x.inicioGet.getDay();
+							var dataDaTarefaEhExatamenteHoje = diaAno == ta && diaMes == tm && diaDia == td;
+							var tarefaJaIniciou = x.inicioGet <= pDia;
+							var mesmoDiaDaSemana = ts == diaDiaDeSemana;
+							var diaDoMesEhIgualHoje = td == diaDia;
+							var tarefasLambda =
+								(x.RecorrenciaId == 1 && dataDaTarefaEhExatamenteHoje) ||
+								(x.RecorrenciaId == 2 && tarefaJaIniciou) ||
+								(x.RecorrenciaId == 3 && tarefaJaIniciou && mesmoDiaDaSemana) ||
+								(x.RecorrenciaId == 4 && tarefaJaIniciou && diaDoMesEhIgualHoje);
+								
+							return tarefasLambda; 
+						})
+						.select("val,i=>{ configuracaoId: val.configuracaoId, descricao: val.titulo.descricao, recorrencia: val.recorrencium.descricao, Index: i }")
+						.toArray();
+					
+					callback();
+				});
 		},
-		function segunda (callback){
+		function segunda (callback) {
 
 								TarefaConcluida
-									.findAll( /*{ where: { dataConclusao: pDia } } */ )
+									//.findAll( { where: { dataConclusao: new Date('2016-10-29') } }  )
+									.findAll( { 
+										where: 
+											sequelize.where(
+												sequelize.fn('date', sequelize.col('DataConclusao')), 
+												new Date('2016-10-29')) }  )
 									.then( function (tcs) {
-										
-										console.log('******* TarefaConcluida *********');
-										console.log('JSON.stringify(tcs)');
+
+										console.log('tcs');
 										console.log(JSON.stringify(tcs));
-										console.log('******* TarefaConcluida *********');
 										console.log('');
 										
 										tarefasConcluidas = tcs;
@@ -228,16 +228,23 @@ app.post('/api/obterTarefas', function (req, res) {
 										callback();
 									});
 		},
-		function terceira (callback){
+		function terceira (callback) {
 
 								for(i = 0; i < tarefas.length; i++) {
 									for(j = 0; j < tarefasConcluidas.length; j++) {
+										console.log('88888888888888888');
+										console.log(tarefas[i].configuracaoId);
+										console.log(tarefasConcluidas[j].configuracaoId);
+										console.log('88888888888888888');
 										if (tarefas[i].configuracaoId === tarefasConcluidas[j].configuracaoId) {
 											tarefas[i].concluida = true;
 										} else {
 											tarefas[i].concluida = false;
 										}												
 									}
+									console.log('tarefas[i]');
+									console.log(JSON.stringify(tarefas[i]));
+									console.log('');
 								}
 										
 								callback();
@@ -342,7 +349,6 @@ app.post('/api/gravarNovaConfiguracao', function (req, res) {
             res.json({ sucesso: true, mensagem: "Config de tarefa inserida ok", objeto: { } });
         }
     });
-
 });
 
 // application -------------------------------------------------------------
