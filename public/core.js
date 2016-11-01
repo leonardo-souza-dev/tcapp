@@ -217,10 +217,16 @@ function mainController($scope, $http, $scope) {
 	$scope.concluirTarefa = function(tarefa) {
 
 		if (tarefa.concluida != null && tarefa.concluida == false) {
+
 			tarefa.concluida = true;
 			tarefa.estilo = estiloTarefaConcluida;
 
-	        $http.post('/api/concluirTarefa', {configuracaoId: tarefa.configuracaoId, data: tarefa.data })
+	        $http
+		        .post('/api/concluirTarefa', {
+		        	configuracaoId: tarefa.configuracaoId, 
+		        	data: tarefa.data,
+		        	concluir: true
+		        })
 	            .success(function(data) {
 	                $scope.sistema = {}; 
 	                $scope.sistema.resultadocriacao = data.mensagem;
@@ -232,6 +238,21 @@ function mainController($scope, $http, $scope) {
 		} else {
 			tarefa.concluida = false;
 			tarefa.estilo = estiloTarefaNaoConcluida;
+
+	        $http
+		        .post('/api/concluirTarefa', {
+		        	configuracaoId: tarefa.configuracaoId, 
+		        	data: tarefa.data,
+		        	concluir: false
+		        })
+	            .success(function(data) {
+	                $scope.sistema = {}; 
+	                $scope.sistema.resultadocriacao = data.mensagem;
+					$scope.sistemas.push(data.objeto.sistema); 
+	            })
+	            .error(function(data) {
+	                console.log('Error: ' + data.mensagem);
+	            });
 		}
 	}
 	

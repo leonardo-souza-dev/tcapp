@@ -54,6 +54,25 @@ function formatarYYYYMMDD(dateFieldValue){
 	return dateFormat;
 }
 
+function helpList(tarefa, lista){
+    console.log('****************************************');
+    console.log('tarefas');
+    console.log(JSON.stringify(tarefa));
+    console.log('');
+    var tem = false;
+    for (j = 0; j < lista.length; j++) {
+    //console.log('****************************************');
+    //console.log('lista[j].configuracaoId');
+    //console.log(JSON.stringify(lista[j].configuracaoId));
+    //console.log(lista[j].configuracaoId);
+    //console.log('');
+        if (tarefa.configuracaoId === lista[j].configuracaoId) {
+            tem = true;
+        }
+    }
+    return tem;
+}
+
 var Recorrencia = sequelize.define('recorrencia', {
         recorrenciaId: { 
             type: Sequelize.INTEGER, 
@@ -143,16 +162,11 @@ var TarefaConcluida = sequelize.define('tarefaConcluida', {
         dataConclusao: { 
             type: Sequelize.DATE, 
             field: 'dataConclusao',
-            allowNull: false  
+            allowNull: true  
         },
         dataCriacao: { 
             type: Sequelize.DATE, 
             field: 'dataCriacao',
-            allowNull: false  
-        },
-        ativo: { 
-            type: Sequelize.BOOLEAN, 
-            field: 'ativo',
             allowNull: false  
         },
         dataAtualizacao: { 
@@ -245,9 +259,9 @@ app.post('/api/obterTarefas', function (req, res) {
 								configuracaoId: { $in: tarefasIds } }  )
 				.then( function (tcs) {
 
-					console.log('------------tcs-------------');
-					console.log(JSON.stringify(tcs));
-					console.log('');
+					//console.log('------------tcs-------------');
+					//console.log(JSON.stringify(tcs));
+					//console.log('');
 					
 					tarefasConcluidas = tcs;
 					
@@ -256,24 +270,30 @@ app.post('/api/obterTarefas', function (req, res) {
 		},
 		function mergeFn (callback) {
 
-			console.log('...... tarefas');
-			console.log(JSON.stringify(tarefas));
-			console.log('...... tarefasConcluidas');
-			console.log(JSON.stringify(tarefasConcluidas));
-			console.log('');
+			//console.log('...... tarefas');
+			//console.log(JSON.stringify(tarefas));
+			//console.log('...... tarefasConcluidas');
+			//console.log(JSON.stringify(tarefasConcluidas));
+			//console.log('');
 
 			for(i = 0; i < tarefas.length; i++) {
 
 				var mConcluida = true;
-				console.log('PRIMEIRO FOR');
-				console.log('tarefas[i].configuracaoId');
-				console.log(tarefas[i].configuracaoId);
+				//console.log('PRIMEIRO FOR');
+				//console.log('tarefas[i].configuracaoId');
+				//console.log(tarefas[i].configuracaoId);
 
 				if (tarefasConcluidas.length == 0) {
 					tarefas[i].concluida = false;	
 				}
 				else if (tarefasConcluidas.length > 0) {
-					for(j = 0; j < tarefasConcluidas.length; j++) {
+
+                    var esta = helpList(tarefas[i], tarefasConcluidas);
+                    tarefas[i].concluida = esta;
+
+
+
+					/*for(j = 0; j < tarefasConcluidas.length; j++) {
 
 						console.log('    SEGUNDO FOR');
 						console.log('    tarefasConcluidas[i].configuracaoId');
@@ -289,7 +309,7 @@ app.post('/api/obterTarefas', function (req, res) {
 						}
 					}
 					console.log('    **** tarefa configuracaoId #' + tarefas[i].configuracaoId + ', conclusao é ' + mConcluida);
-					tarefas[i].concluida = mConcluida;
+					tarefas[i].concluida = mConcluida;*/
 				}
 			}
 					
@@ -339,17 +359,35 @@ app.post('/api/concluirTarefa', function (req, res) {
 	console.log(req.body);
 
 	var mConfiguracaoId = req.body.configuracaoId;
-	var mData = req.body.data;
+    var mData = req.body.data;
+    var mConcluir = req.body.concluir;
 	//TODO: Corrigir bug de timezone. Criar trigger global no banco
-	TarefaConcluida.create({ 
-		configuracaoId: mConfiguracaoId, 
-		dataConclusao: new Date(mData),
-		ativo: true,
-		dataCriacao: new Date()
-	}).then(function(tarefaConcluida) {
-		console.log('tarefa concluida');
-		console.log(JSON.stringify(tarefaConcluida));
-	});
+
+    if (mConcluir == true) {
+    	TarefaConcluida.create({ 
+    		configuracaoId: mConfiguracaoId, 
+    		dataConclusao: new Date(mData),
+    		dataCriacao: new Date()
+    	}).then(function(tarefaConcluida) {
+    		console.log('Tarefa concluida');
+    		console.log(JSON.stringify(tarefaConcluida));
+            console.log('');
+    	});
+    } else if (mConcluir == false) {
+        TarefaConcluida.update({ 
+            dataConclusao: null,
+            dataAtualizacao: new Date()
+        }, { 
+            where: {
+                configuracaoId: mConfiguracaoId,
+                dataConclusao: new Date(mData)
+        }
+        }).then(function(tarefaConcluida) {
+            console.log('Conclusao de tarefa atualizada ');
+            console.log(JSON.stringify(tarefaConcluida));
+            console.log('');
+        });        
+    }
 });
 
 app.post('/api/gravarNovaConfiguracao', function (req, res) {
