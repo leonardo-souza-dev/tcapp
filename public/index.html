@@ -58,10 +58,8 @@
 					<div class="col s4 center">
 						<a href="#" ng-click="verProximoDia()">{{proximoDia.data}}</a>
 					</div>
-					<div class="col s12 center" ng-repeat="tarefa in tarefasDoDia">
-						<div class="card" 
-							ng-style="tarefa.estilo" 
-							ng-click="concluirTarefa(tarefa)">
+					<div class="col s12 center" ng-repeat="tarefa in tarefasDoDia" ng-click="concluirTarefa(tarefa)">
+						<div class="card" ng-style="tarefa.estilo" >
 							<div class="card-content" id="{{tarefa.configuracaoId}}">
 								<h5>{{tarefa.descricao}}</h5>
 								<h6>{{tarefa.recorrencia}}</h6>

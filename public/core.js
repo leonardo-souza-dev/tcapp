@@ -76,8 +76,9 @@ var diaInicial = new Date();
 function mainController($scope, $http, $scope) {
 
 
-	$scope.tarefasDoDia = $http.post('/api/obterTarefas', {dia: diaInicial}).then( function successCallback(response){
+	$scope.tarefasDoDia = $http.post('/api/obterTarefas', { dia: diaInicial }).then( function successCallback(response){
 		
+		console.log(response.data.objeto.tarefas);
 		return obterTarefass(response.data.objeto.tarefas);
 	}, function errorCallback(response){
         console.log('ERRO');
@@ -109,7 +110,7 @@ function mainController($scope, $http, $scope) {
 
 
 
-	$scope.recorrencias= $http.get('/api/obterRecorrencias').then(function successCallback(response){
+	$scope.recorrencias = $http.get('/api/obterRecorrencias').then(function successCallback(response){
 
 		return response.data.objeto.recorrencias;
 
@@ -215,11 +216,11 @@ function mainController($scope, $http, $scope) {
 
 	$scope.concluirTarefa = function(tarefa) {
 
-		if (tarefa.estaConcluida != null && tarefa.estaConcluida == false) {
-			tarefa.estaConcluida = true;
+		if (tarefa.concluida != null && tarefa.concluida == false) {
+			tarefa.concluida = true;
 			tarefa.estilo = estiloTarefaConcluida;
 
-	        $http.post('/api/concluirTarefa', {configuracaoId: tarefa.configuracaoId})
+	        $http.post('/api/concluirTarefa', {configuracaoId: tarefa.configuracaoId, data: tarefa.data })
 	            .success(function(data) {
 	                $scope.sistema = {}; 
 	                $scope.sistema.resultadocriacao = data.mensagem;
@@ -228,9 +229,8 @@ function mainController($scope, $http, $scope) {
 	            .error(function(data) {
 	                console.log('Error: ' + data.mensagem);
 	            });
-			console.log('tarefa ' + tarefa.titulo + ' acabada em ' + formatarDDMMYYYYHHMM(new Date()));
 		} else {
-			tarefa.estaConcluida = false;
+			tarefa.concluida = false;
 			tarefa.estilo = estiloTarefaNaoConcluida;
 		}
 	}

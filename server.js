@@ -33,12 +33,15 @@ var sequelize = new Sequelize(connStr,   {
 
 //utils
 function obterAno(data){
+
     return data.substring(0,4);
 }
 function obterMes(data){
+
     return data.substring(5,7);
 }
 function obterDia(data){
+
     return data.substring(8,10);
 }
 function formatarYYYYMMDD(dateFieldValue){
@@ -141,6 +144,21 @@ var TarefaConcluida = sequelize.define('tarefaConcluida', {
             type: Sequelize.DATE, 
             field: 'dataConclusao',
             allowNull: false  
+        },
+        dataCriacao: { 
+            type: Sequelize.DATE, 
+            field: 'dataCriacao',
+            allowNull: false  
+        },
+        ativo: { 
+            type: Sequelize.BOOLEAN, 
+            field: 'ativo',
+            allowNull: false  
+        },
+        dataAtualizacao: { 
+            type: Sequelize.DATE, 
+            field: 'dataAtualizacao',
+            allowNull: true 
         }
     },{ tableName: 'TarefaConcluida' }
 );
@@ -173,6 +191,7 @@ app.post('/api/obterTarefas', function (req, res) {
 	var pDia = new Date(rDia);
 	
 	var tarefas = [];
+	var tarefasIds = [];
 	var tarefasConcluidas = [];
 	var tarefasMerge = [];
 	
@@ -182,16 +201,20 @@ app.post('/api/obterTarefas', function (req, res) {
 			Configuracao
 				.findAll({ include: [ Titulo, Recorrencia ] })
 				.then( function (configs) {
-
 					
 					var diaAno = pDia.getFullYear();
 					var diaMes = pDia.getMonth() + 1;
 					var diaDia = pDia.getDate();
 					var diaDiaDeSemana = pDia.getDay();
 
-					tarefas = Enumerable.from(configs)
+					var select = "val,i=>{ data: '" + diaAno + "-" + diaMes + "-" + diaDia + "', " + 
+					" configuracaoId: val.configuracaoId, " + 
+					" descricao: val.titulo.descricao, " + 
+					" recorrencia: val.recorrencium.descricao, " + 
+					" Index: i }";
+
+					var tarefasEnum = Enumerable.from(configs)
 						.where(function (x) {
-							//console.log('****************');console.log('JSON.stringify(x)');console.log(JSON.stringify(x));console.log('****************');console.log('');
 							var ta = x.inicioGet.getFullYear();
 							var tm = x.inicioGet.getMonth() + 1;
 							var td = x.inicioGet.getDate();
@@ -207,25 +230,22 @@ app.post('/api/obterTarefas', function (req, res) {
 								(x.RecorrenciaId == 4 && tarefaJaIniciou && diaDoMesEhIgualHoje);
 								
 							return tarefasLambda; 
-						})
-						.select("val,i=>{ configuracaoId: val.configuracaoId, descricao: val.titulo.descricao, recorrencia: val.recorrencium.descricao, Index: i }")
-						.toArray();
-					
+						});
+					tarefas    = tarefasEnum.select(select).toArray();
+					tarefasIds = tarefasEnum.select(function(value, index) { return value.configuracaoId; }).toArray();
+										
 					callback();
 				});
 		},
 		function tarefasConcluidasFn (callback) {
 
 			TarefaConcluida
-				//.findAll( { where: { dataConclusao: new Date('2016-10-29') } }  )
-				.findAll( { 
-					where: 
-						sequelize.where(
-							sequelize.fn('date', sequelize.col('DataConclusao')), 
-							formatarYYYYMMDD(pDia)) }  )
+				.findAll( { where: 
+								sequelize.where(sequelize.fn('date', sequelize.col('DataConclusao')), formatarYYYYMMDD(pDia)),
+								configuracaoId: { $in: tarefasIds } }  )
 				.then( function (tcs) {
 
-					console.log('tcs');
+					console.log('------------tcs-------------');
 					console.log(JSON.stringify(tcs));
 					console.log('');
 					
@@ -236,42 +256,51 @@ app.post('/api/obterTarefas', function (req, res) {
 		},
 		function mergeFn (callback) {
 
+			console.log('...... tarefas');
+			console.log(JSON.stringify(tarefas));
+			console.log('...... tarefasConcluidas');
+			console.log(JSON.stringify(tarefasConcluidas));
+			console.log('');
+
 			for(i = 0; i < tarefas.length; i++) {
 
-				// console.log('##############');
-				// console.log('i');
-				// console.log(i);
-				// console.log(JSON.stringify(tarefas[i]));
-				// console.log('');
-
 				var mConcluida = true;
+				console.log('PRIMEIRO FOR');
+				console.log('tarefas[i].configuracaoId');
+				console.log(tarefas[i].configuracaoId);
 
-				for(j = 0; j < tarefasConcluidas.length; j++) {
-
-					// console.log('------------');
-					// console.log('j');
-					// console.log(j);
-					// console.log(JSON.stringify(tarefasConcluidas[j]));
-					// console.log('');
-
-					if (tarefas[i].configuracaoId === tarefasConcluidas[j].configuracaoId) {
-						console.log('tarefa configuracaoId #' + tarefas[i].configuracaoId + ' esta concluida');
-						//tarefas[i].concluida = true;
-					} else {
-						console.log('tarefa configuracaoId #' + tarefas[i].configuracaoId + ' nao esta concluida');
-						mConcluida = mConcluida && false;
-						//tarefas[i].concluida = false;
-					}
+				if (tarefasConcluidas.length == 0) {
+					tarefas[i].concluida = false;	
 				}
-				tarefas[i].concluida = mConcluida;
-				console.log('77777777777777777');
-				console.log(JSON.stringify(tarefas[i]));
+				else if (tarefasConcluidas.length > 0) {
+					for(j = 0; j < tarefasConcluidas.length; j++) {
+
+						console.log('    SEGUNDO FOR');
+						console.log('    tarefasConcluidas[i].configuracaoId');
+						console.log('    ' + tarefasConcluidas[j].configuracaoId);
+
+						var condicao = tarefas[i].configuracaoId === tarefasConcluidas[j].configuracaoId;
+
+						//TODO: consertar bug quando seta conclusao de tarefa
+
+						if (condicao ==  false) {
+							console.log('    configuracaoIds nao eh igual');
+							mConcluida = mConcluida && false;
+						}
+					}
+					console.log('    **** tarefa configuracaoId #' + tarefas[i].configuracaoId + ', conclusao é ' + mConcluida);
+					tarefas[i].concluida = mConcluida;
+				}
 			}
 					
 			callback();
 		}
 	], function(err) { 
 		if (err != null) return res.status(500).send(err);
+
+		console.log('RESPONSE: tarefas obtidas');
+		console.log(JSON.stringify(tarefas));
+		console.log('.');
 			
         res.json({ success: true, message: 'tarefas obtidas', objeto: { tarefas: tarefas }});
     });
@@ -306,34 +335,21 @@ app.get('/api/obterTitulosTarefas', function (req, res) {
 });
 
 app.post('/api/concluirTarefa', function (req, res) {
+
 	console.log(req.body);
+
 	var mConfiguracaoId = req.body.configuracaoId;
+	var mData = req.body.data;
+	//TODO: Corrigir bug de timezone. Criar trigger global no banco
 	TarefaConcluida.create({ 
 		configuracaoId: mConfiguracaoId, 
-		dataConclusao: new Date() }).then(function(tarefaConcluida) {
+		dataConclusao: new Date(mData),
+		ativo: true,
+		dataCriacao: new Date()
+	}).then(function(tarefaConcluida) {
 		console.log('tarefa concluida');
 		console.log(JSON.stringify(tarefaConcluida));
 	});
-});
-
-app.post('/api/concluirTarefa2', function (req, res) {
-    console.log('concluirTarefa');
-
-    var configuracaoId = req.body.ConfigId;
-
-    var query = " INSERT INTO `hjqoto3qzd8dzwaw`.`TarefaConcluida` " +
-                "        (      `ConfiguracaoId`, `DataConclusao`)  " +
-                " VALUES (" + configuracaoId + ",          NOW() ); ";
-
-    connection.query(query, function(err, rows, fields) {
-        if (err) {
-            console.log('Erro na query: ' + err);
-            connection.end();
-        } else {
-            console.log(rows);
-            res.json({ sucesso: true, mensagem: "Tarefa concluida", objeto: { } });
-        }
-    });
 });
 
 app.post('/api/gravarNovaConfiguracao', function (req, res) {
@@ -381,6 +397,25 @@ app.post('/api/gravarNovaConfiguracao', function (req, res) {
             res.json({ sucesso: true, mensagem: "Config de tarefa inserida ok", objeto: { } });
         }
     });
+});
+
+// HELPERS
+app.get('/api/deletarTarefasConcluidas', function (req, res) {
+
+    TarefaConcluida
+        .destroy({ where: { }, force: true })
+        .then( function deletarTarefasConcluidasFn () {
+            res.json({ sucesso: true, mensagem: "TarefaConcluida deletadas fn ", objeto: { } });
+        });
+});
+
+app.get('/api/obterTarefasConcluidas', function (req, res) {
+
+    TarefaConcluida
+        .findAll()
+        .then( function obterTarefasConcluidasFn (pTcs) {
+            res.json({ sucesso: true, mensagem: "TarefaConcluida obtidas fn ", objeto: { tcs: pTcs } });
+        });
 });
 
 // application -------------------------------------------------------------
