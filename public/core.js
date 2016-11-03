@@ -235,7 +235,7 @@ function mainController($scope, $http, $scope) {
 	            .error(function(data) {
 	                console.log('Error: ' + data.mensagem);
 	            });
-		} else {
+		} else if (tarefa.concluida != null && tarefa.concluida == true) {
 			tarefa.concluida = false;
 			tarefa.estilo = estiloTarefaNaoConcluida;
 
