@@ -201,8 +201,6 @@ app.get('/api/obterConfiguracoes', function (req, res)  {
 
     var query = " SELECT * FROM hjqoto3qzd8dzwaw.Configuracao ";
 
-    //console.log(query);
-
     connection.query(query, function(err, rows, fields) {
         if (err) {
             console.log('Erro na query: ' + err);
@@ -335,7 +333,6 @@ app.get('/api/obterRecorrencias', function (req, res) {
 });
 
 app.get('/api/obterTitulosTarefas', function (req, res) {
-    console.log('obterTitulosTarefas');
 
     TituloTarefaModel.find(function (err, data) {
         if (err) res.send(err);
@@ -368,12 +365,6 @@ app.post('/api/concluirTarefa', function (req, res) {
 
                     tarefaBuscada = t[0];
 
-                    console.log('||||||||||||| TAREFA');
-                    console.log('||||||||||||| configuracaoId: ' + mConfiguracaoId);
-                    console.log('||||||||||||| dataConclusao: ' + formatarYYYYMMDD(new Date(mData)));
-                    console.log('||||||||||||| ativo: false ');
-                    console.log(pretty(JSON.stringify(t)));
-
                     callback();
                 });
             },
@@ -403,21 +394,13 @@ app.post('/api/concluirTarefa', function (req, res) {
                 } 
             } else {
 
-                console.log('--------------- 2b ---------------');
-                console.log(pretty(JSON.stringify(tarefaBuscada)));
                 var id = tarefaBuscada.tarefaConcluidaId;
-                console.log('id');
-                console.log(id);
 
-                console.log(mConcluir);
-                    
                 TarefaConcluida.update({ 
                     dataAtualizacao: new Date(),
                     ativo: mConcluir
                 }, { where: { tarefaConcluidaId: id } } ).then(function() {
                     console.log('Tarefa concluida atualizada');
-                    //console.log(pretty(JSON.stringify(tarefaConcluida)));
-                    console.log('');
                 });
 
             }

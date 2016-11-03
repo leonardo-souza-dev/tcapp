@@ -84,9 +84,31 @@ function obterTarefasDoDia($scope, $http){
 
 }
 
+
+function verDiaOffset(diaOffset, $scope, $http){
+
+	$scope.tarefasDoDia = $http.post('/api/obterTarefas', {dia: addDays(diaInicial, diaOffset)}).then( function successCallback(response){
+			
+			diaInicial = addDays(diaInicial, diaOffset);
+			
+			$scope.diaAtual = { data: formatarDDMMYYYY(diaInicial) };
+			$scope.proximoDia = { data: formatarDDMMYYYY(addDays(diaInicial, 1)) };
+			$scope.diaAnterior = { data: formatarDDMMYYYY(addDays(diaInicial, -1)) };
+
+			return obterTarefass(response.data.objeto.tarefas);
+
+		}, function errorCallback(response){
+	        console.log('ERRO');
+	        console.log(response);
+		});
+
+}
+
 var diaInicial = new Date();
 
-function mainController($scope, $http, $scope) {
+
+
+function mainController($scope, $http) {
 
 	
 
@@ -161,9 +183,7 @@ function mainController($scope, $http, $scope) {
             .success(function(data) {
             	$scope.novaTarefaEscondida = true;
                 $scope.configuracao = {}; 
-                console.log('oi');
                 obterTarefasDoDia($scope, $http);
-                console.log('ola');
             })
             .error(function(data) {
                 console.log('Error: ' + data.mensagem);
@@ -173,53 +193,15 @@ function mainController($scope, $http, $scope) {
 	
 
 	$scope.verProximoDia = function(){ 
-	
-		var mDia = addDays(diaInicial,1);
-		console.log('mDia');
-		console.log(mDia);
 
-		$scope.tarefasDoDia = $http.post('/api/obterTarefas', {dia: mDia}).then( function successCallback(response){
-				
-				diaInicial = addDays(diaInicial, 1);
-				
-				$scope.diaAtual = { data: formatarDDMMYYYY(diaInicial) };
-				$scope.proximoDia = { data: formatarDDMMYYYY(addDays(diaInicial,1)) };
-				$scope.diaAnterior = { data: formatarDDMMYYYY(addDays(diaInicial, -1)) };
-				
-				console.log('!!!!!!!!!!!!!!');
-				console.log(response.data.objeto.tarefas);
-				
-				return obterTarefass(response.data.objeto.tarefas);
-
-			}, function errorCallback(response){
-		        console.log('ERRO');
-		        console.log(response);
-			});
+		verDiaOffset(1, $scope, $http);
 	}
 	
 	
 
 	$scope.verDiaAnterior = function(){ 
 
-		var diaAConsultar = addDays(diaInicial, -1);
-
-		$scope.tarefasDoDia = $http.post('/api/obterTarefas', {dia: diaAConsultar}).then( function successCallback(response){
-				
-				diaInicial = diaAConsultar;
-				
-				$scope.diaAtual = { data: formatarDDMMYYYY(diaInicial) };
-				$scope.proximoDia = { data: formatarDDMMYYYY(addDays(diaInicial, 1)) };
-				$scope.diaAnterior = { data: formatarDDMMYYYY(addDays(diaInicial, -1)) };
-				
-				console.log('!!!!!!!!!!!!!!');
-				console.log(response.data.objeto.tarefas);
-
-				return obterTarefass(response.data.objeto.tarefas);
-
-			}, function errorCallback(response){
-		        console.log('ERRO');
-		        console.log(response);
-			});
+		verDiaOffset(-1, $scope, $http);
 	}
 	
 	
