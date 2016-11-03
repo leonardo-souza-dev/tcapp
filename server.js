@@ -12,6 +12,7 @@ var Enumerable = require('linq');
 
 
 // configuration =================
+app.set('port', (process.env.PORT || 8082));
 app.use(express.static(__dirname + '/public'));
 app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({ 'extended': 'true' }));
@@ -490,5 +491,7 @@ app.get('*', function (req, res) {
 
 
 // listen (start app with node server.js) ======================================
-app.listen(8082);
-console.log("tcapp na porta 8082");
+app.listen(app.get('port'), function() {
+
+    console.log('tcapp na porta ', app.get('port'));
+});
