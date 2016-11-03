@@ -18,23 +18,6 @@
 	</head>
 
 	<body ng-controller="mainController" ng-init="novaTarefaEscondida=true">
-		<!--
-		<nav class="light-blue lighten-1" role="navigation" style="background-color: #CCCCCC !important;">
-			<div class="nav-wrapper container">
-				<a id="logo-container" href="#" class="brand-logo" style="font-size:18px" ng-click="home()">tcapp</a>
-				<ul class="right hide-on-med-and-down">
-					<li><a href="index.html">Home</a></li>
-					<li><a href="#" ng-click="novaTarefa()">Nova tarefa</a></li>
-				</ul>
-				<ul id="nav-mobile" class="side-nav" style="transform: translateX(-100%);">
-					<li><a href="index.html">Home</a></li>
-					<li><a href="#" ng-click="novaTarefa()">Nova tarefa</a></li>
-			    </ul>
-				<a href="#" data-activates="nav-mobile" class="button-collapse">
-					<i class="material-icons">menu</i>
-				</a>
-			</div>
-		</nav>-->
 		
 		<div class="fixed-action-btn" style="bottom: 24px; right: 24px;" ng-show="novaTarefaEscondida">
 			<a class="btn-floating btn-large waves-effect waves-light blue" ng-click="novaTarefa()" ><i class="material-icons">add</i></a>
@@ -91,20 +74,6 @@
 						</select>
 
 						<h6>Começa</h6>
-						<!--<div style="display:flex;flex-direction:row;flex-wrap:nowrap;justify-content:space-between;">
-							<a href="#" style="padding:7px;text-align:center;background-color:#CCCCCC;width:31%;height:150px;border: 2px gray;background-image: url('./images/hojex.png');">
-								<span style="margin:auto;">Hoje</span>
-							</a>
-							
-							<a href="#" style="padding:7px;text-align:center;background-color:#CCCCCC;width:31%;height:150px;border: 2px gray;background-image: url('./images/amanhax.png');">
-								<span>Amanhã</span>
-							</a>
-							
-							<a href="#" style="padding:7px;text-align:center;background-color:#CCCCCC;width:31%;height:150px;border: 2px gray;background-image: url('./images/xdepois_de_amanha.png');">
-								<span style="margin-top:30px;">Depois de amanhã</span>
-							</a>
-						</div>
-						-->
 						<select class="browser-default" ng-model="configuracao.inicio">
 							<option value="titulo">--Quando começa--</option>
 							<option ng-repeat="com in comecos" value="{{com.id}}">{{com.descricao}}</option>
@@ -116,12 +85,6 @@
 			</div>
 		</div>
 
-	
-		<!--
-			<footer class="orange" style="background-color: #CCCCCC !important; position:absolute; bottom:0; width:100%; height:60px; background:#6cf;">
-			    <h5 class="white-text">® TCAPP 2016</h5>
-			</footer>
-		-->
 		<!-- Scripts-->
 		<script src="js/jquery-2.0.3.min.js"></script>
 		<script src="js/old_angular-1.0.8/angular-1.0.8/angular.min.js"></script>
