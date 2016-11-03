@@ -71,10 +71,7 @@ function obterTarefass(d){
 	return tarefas;
 }
 
-var diaInicial = new Date();
-
-function mainController($scope, $http, $scope) {
-
+function obterTarefasDoDia($scope, $http){
 
 	$scope.tarefasDoDia = $http.post('/api/obterTarefas', { dia: diaInicial }).then( function successCallback(response){
 		
@@ -85,7 +82,17 @@ function mainController($scope, $http, $scope) {
         console.log(response);
 	});
 
+}
+
+var diaInicial = new Date();
+
+function mainController($scope, $http, $scope) {
+
 	
+
+	obterTarefasDoDia($scope, $http);
+
+
 	
 	$scope.diaAtual = { data: formatarDDMMYYYY(diaInicial) };
 	
@@ -154,6 +161,9 @@ function mainController($scope, $http, $scope) {
             .success(function(data) {
             	$scope.novaTarefaEscondida = true;
                 $scope.configuracao = {}; 
+                console.log('oi');
+                obterTarefasDoDia($scope, $http);
+                console.log('ola');
             })
             .error(function(data) {
                 console.log('Error: ' + data.mensagem);
