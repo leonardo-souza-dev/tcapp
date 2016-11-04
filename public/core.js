@@ -3,7 +3,7 @@
 	var tcapp = angular.module('tcapp', ['ngRoute']);
 
 	
-	tcapp.config(function($routeProvider){
+	tcapp.config(function($routeProvider, $locationProvider){
 		
 	    $routeProvider
 		    .when("/", {
@@ -14,6 +14,8 @@
 		        templateUrl: "nova_tarefa.html",
 		        controller: 'mainController'
 		    });
+
+	    $locationProvider.html5Mode(true);
 	});
 
 	tcapp.controller('mainController', function($scope, $http, $location) {
