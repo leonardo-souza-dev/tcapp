@@ -7,11 +7,11 @@
 		
 	    $routeProvider
 		    .when("/", {
-		        templateUrl: "main.html",
+		        templateUrl: "pages/main.html",
 		        controller: 'mainController'
 		    })
 		    .when("/nova-tarefa", {
-		        templateUrl: "nova_tarefa.html",
+		        templateUrl: "pages/nova_tarefa.html",
 		        controller: 'mainController'
 		    });
 
@@ -30,6 +30,7 @@
 		
 		
 		$scope.diaAnterior = { data: formatarDDMMYYYY(addDays(diaInicial, -1)) };
+		
 		
 		
 		
@@ -193,17 +194,6 @@
 		return dateFormat;
 	}
 
-	function obterTarefas($scope, $http){
-		
-		$http.get('/api/obterTarefas').success(function(data){
-
-			//console.log('data');console.log(data);console.log('');
-
-			//$scope.tarefas = data.objeto.tarefas;
-		}).error(function(data){
-	        console.log('');
-		});
-	}
 
 	function addDays(date, days) {
 	    var result = new Date(date);
