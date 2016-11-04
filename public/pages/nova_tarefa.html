@@ -5,15 +5,27 @@
 <div id="novatarefa" class="container">
 	<div class="section">
 		<div class="row">
-			<div class="col s12">
+			<div class="col s12"  ng-init="titulosOpcoesVisivel = false">
 				<h3><i class="mdi-content-send brown-text"></i></h3>
 				<h5>Nova TC</h5>
-
-				<h6>Titulo</h6>
-				<select class="browser-default" ng-model="configuracao.titulo">
-					<option value="titulo">--Título--</option>
-					<option ng-repeat="tit in titulos" value="{{tit.tituloId}}">{{tit.descricao}}</option>
-				</select>
+				
+				<div on-long-press="itemOnLongPress(item.id)" on-touch-end="itemOnTouchEnd(item.id)">
+					<h6>Titulo</h6>
+					<select class="browser-default" ng-model="configuracao.titulo">
+						<option value="titulo">--Título--</option>
+						<option ng-repeat="tit in titulos" value="{{tit.tituloId}}">{{tit.descricao}}</option>
+					</select>
+				</div>
+				
+				<div class="modale bottom-sheet" ng-show="titulosOpcoesVisivel">
+					<div class="modal-content">
+						<h4>Modal Header</h4>
+						<p>A bunch of text</p>
+					</div>
+					<div class="modal-footer">
+						<a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Agree</a>
+					</div>
+				</div>
 
 				<h6>Recorrencia</h6>
 				<select class="browser-default" ng-change="atualizaInicio()" ng-model="configuracao.recorrencia">

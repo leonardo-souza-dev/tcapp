@@ -493,5 +493,5 @@ app.get('*', function (req, res) {
 // listen (start app with node server.js) ======================================
 app.listen(app.get('port'), function() {
 
-    console.log('tcapp na porta ', app.get('port'));
+    console.log('tcapp na porta', app.get('port'));
 });

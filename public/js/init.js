@@ -2,6 +2,7 @@
   $(function(){
 
     $('.button-collapse').sideNav();
+	
 	console.log('.::.');
 
   }); // end of document ready
