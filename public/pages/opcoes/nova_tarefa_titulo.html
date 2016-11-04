@@ -1,0 +1,7 @@
+<h5>Título</h5>
+
+<ul class="collection with-header">
+	<li class="collection-item" ng-repeat="tit in titulos">	 
+		<div data-value="{{tit.tituloId}}" ng-click="escolherTitulo(tit)">{{tit.descricao}}</div>
+	</li>
+</ul>
