@@ -17,78 +17,15 @@
 		<link type="text/css" rel="stylesheet" href="css/materialize.min.css" media="screen,projection"/>
 	</head>
 
-	<body ng-controller="mainController" ng-init="novaTarefaEscondida=true">
-		
-		<div class="fixed-action-btn" style="bottom: 24px; right: 24px;" ng-show="novaTarefaEscondida">
-			<a class="btn-floating btn-large waves-effect waves-light blue" ng-click="novaTarefa()" ><i class="material-icons">add</i></a>
-		</div>
-		
-		<div class="fixed-action-btn" style="bottom: 24px; left: 24px;" ng-show="!novaTarefaEscondida">
-			<a class="btn-floating btn-large waves-effect waves-light red" ng-click="novaTarefa()" ><i class="material-icons">undo</i></a>
-		</div>
+	<body ng-controller="mainController" >
 
-		<div id="tarefasDeHoje" class="container" ng-show="novaTarefaEscondida">
-			<div class="section">
-				<div class="row">
-					<div class="col s4 center">
-						<a href="#" ng-click="verDiaAnterior()">{{diaAnterior.data}}</a>
-					</div>
-					<div class="col s4 center">
-						<h3><i class="mdi-content-send brown-text"></i></h3>
-						<h5>TC</h5>
-						<h6>{{diaAtual.data}}</h6>
-					</div>
-					<div class="col s4 center">
-						<a href="#" ng-click="verProximoDia()">{{proximoDia.data}}</a>
-					</div>
-					<div class="col s12 center" ng-repeat="tarefa in tarefasDoDia" ng-click="concluirTarefa(tarefa)">
-						<div class="card" ng-style="tarefa.estilo" >
-							<div class="card-content" id="{{tarefa.configuracaoId}}">
-								<h5>{{tarefa.descricao}}</h5>
-								<h6>{{tarefa.recorrencia}}</h6>
-								<!-- <h6>{{tarefa.configuracaoId}}</h6> -->
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<div id="novatarefa" class="container" ng-show="!novaTarefaEscondida">
-			<div class="section">
-				<div class="row">
-					<div class="col s12">
-						<h3><i class="mdi-content-send brown-text"></i></h3>
-						<h5>Nova TC</h5>
-
-						<h6>Titulo</h6>
-						<select class="browser-default" ng-model="configuracao.titulo">
-							<option value="titulo">--Título--</option>
-							<option ng-repeat="tit in titulos" value="{{tit.tituloId}}">{{tit.descricao}}</option>
-						</select>
-
-						<h6>Recorrencia</h6>
-						<select class="browser-default" ng-change="atualizaInicio()" ng-model="configuracao.recorrencia">
-							<option value="titulo">--Recorrencia--</option>
-							<option ng-repeat="rec in recorrencias" value="{{rec.recorrenciaId}}">{{rec.descricao}}</option>
-						</select>
-
-						<h6>Começa</h6>
-						<select class="browser-default" ng-model="configuracao.inicio">
-							<option value="titulo">--Quando começa--</option>
-							<option ng-repeat="com in comecos" value="{{com.id}}">{{com.descricao}}</option>
-						</select>
-						
-						<a class="waves-effect waves-light btn blue" style="clear:both;" ng-click="gravarNovaConfiguracao(configuracao)">Nova tarefa</a>
-					</div>
-				</div>
-			</div>
-		</div>
+		<div ng-view></div>		
 
 		<!-- Scripts-->
-		<script src="js/jquery-2.0.3.min.js"></script>
-		<script src="js/old_angular-1.0.8/angular-1.0.8/angular.min.js"></script>
-        <script src="js/materialize.js" type="text/javascript" ></script>
+		<script src="bower_components/jquery/dist/jquery.js"></script>
+		<script src="bower_components/angular/angular.js"></script>
+		<script src="bower_components/angular-route/angular-route.js"></script>
+        <script src="bower_components/materialize/dist/js/materialize.js" type="text/javascript" ></script>
 		<script src="js/init.js"></script>
 		<script src="core.js"></script>
 		

@@ -1,0 +1,30 @@
+<div class="fixed-action-btn" style="bottom: 24px; right: 24px;" >
+	<a href="#nova-tarefa" class="btn-floating btn-large waves-effect waves-light blue" ng-click="novaTarefa()" ><i class="material-icons">add</i></a>
+</div>
+
+<div id="tarefasDeHoje" class="container">
+	<div class="section">
+		<div class="row">
+			<div class="col s4 center">
+				<a href="#/" ng-click="verDiaAnterior()">{{diaAnterior.data}}</a>
+			</div>
+			<div class="col s4 center">
+				<h3><i class="mdi-content-send brown-text"></i></h3>
+				<h5>TC</h5>
+				<h6>{{diaAtual.data}}</h6>
+			</div>
+			<div class="col s4 center">
+				<a href="#/" ng-click="verProximoDia()">{{proximoDia.data}}</a>
+			</div>
+			<div class="col s12 center" ng-repeat="tarefa in tarefasDoDia" ng-click="concluirTarefa(tarefa)">
+				<div class="card" ng-style="tarefa.estilo" >
+					<div class="card-content" id="{{tarefa.configuracaoId}}">
+						<h5>{{tarefa.descricao}}</h5>
+						<h6>{{tarefa.recorrencia}}</h6>
+						<!-- <h6>{{tarefa.configuracaoId}}</h6> -->
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

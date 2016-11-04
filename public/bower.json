@@ -1,0 +1,24 @@
+{
+  "name": "tcapp",
+  "homepage": "https://github.com/ltreze/tcapp",
+  "authors": [
+    "Leonardo <leonardotreze@gmail.com>"
+  ],
+  "description": "tc",
+  "main": "index.html",
+  "keywords": [
+    "tasks"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "^1.5.8",
+    "materialize": "^0.97.7"
+  }
+}
