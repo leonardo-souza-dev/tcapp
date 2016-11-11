@@ -6,10 +6,12 @@
 	tcapp.config(function($routeProvider, $locationProvider){
 		
 	    $routeProvider
+
 		    .when("/", {
 		        templateUrl: "pages/main.html",
 		        controller: 'mainController'
 		    })
+		
 		    .when("/nova-tarefa", {
 		        templateUrl: "pages/nova_tarefa.html",
 		        controller: 'mainController'
@@ -45,6 +47,7 @@
 		}
 
 
+
 		obterTarefasDoDia($scope, $http);
 
 
@@ -54,7 +57,6 @@
 		
 		
 		$scope.diaAnterior = { data: formatarDDMMYYYY(addDays(diaInicial, -1)) };
-		
 		
 		
 		
@@ -94,6 +96,12 @@
 
 			$scope.comecos = [ { id: '1', descricao:'Hoje' }, { id: 2, descricao: 'Amanhã' }, { id: 3, descricao: 'Depois de Amanhã' }];
 		}
+
+
+
+		$scope.mostraGuid = function(){
+			$scope.guid = guid;
+		};
 
 
 

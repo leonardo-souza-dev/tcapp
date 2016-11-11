@@ -1,0 +1,60 @@
+<div class="fixed-action-btn" style="bottom: 24px; left: 24px;" >
+	<a href="/" class="btn-floating btn-large waves-effect waves-light red" ng-click="novaTarefa()" ><i class="material-icons">undo</i></a>
+</div>
+
+<div id="novatarefa" class="container">
+	<div class="section">
+		<div class="row">
+			<div class="col s12"  ng-init="titulosOpcoesVisivel = false">
+				<h3><i class="mdi-content-send brown-text"></i></h3>
+				<h4>Nova TC</h4>
+				<!--			
+				<div on-long-press="itemOnLongPress(item.id)" on-touch-end="itemOnTouchEnd(item.id)">
+					<h6>Titulo</h6>
+					<select class="browser-default" ng-model="configuracao.titulo">
+						<option value="titulo">--Título--</option>
+						<option ng-repeat="tit in titulos" value="{{tit.tituloId}}">{{tit.descricao}}</option>
+					</select>
+				</div>
+	
+				<h6>Recorrencia</h6>
+				<select class="browser-default" ng-change="atualizaInicio()" ng-model="configuracao.recorrencia">
+					<option value="titulo">--Recorrencia--</option>
+					<option ng-repeat="rec in recorrencias" value="{{rec.recorrenciaId}}">{{rec.descricao}}</option>
+				</select>
+
+				<h6>Começa</h6>
+				<select class="browser-default" ng-model="configuracao.inicio">
+					<option value="titulo">--Quando começa--</option>
+					<option ng-repeat="com in comecos" value="{{com.id}}">{{com.descricao}}</option>
+				</select>
+				-->
+				<ul class="collection with-header">
+		        	<li class="collection-item">
+			        	<div>Título
+			        		<a href="#!" class="secondary-content">
+			        			<div>Lavar l...</div>
+		        			</a>
+		        		</div>
+	        		</li>
+		        	<li class="collection-item">
+			        	<div>Recorrência
+			        		<a href="#!" class="secondary-content">
+			        			<div>Única</div>
+		        			</a>
+		        		</div>
+	        		</li>
+			        <li class="collection-item">
+			        	<div>Começa
+			        		<a href="#!" class="secondary-content">
+			        			<div>Amanhã</div>
+			        		</a>
+			        	</div>
+		        	</li>
+			      </ul>
+				
+				<a class="waves-effect waves-light btn blue" style="clear:both;margin-top: 16px" ng-click="gravarNovaConfiguracao(configuracao)">Nova tarefa</a>
+			</div>
+		</div>
+	</div>
+</div>
