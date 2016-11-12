@@ -113,6 +113,11 @@ var Titulo = sequelize.define('titulo', {
             type: Sequelize.STRING, 
             field: 'descricao',
             allowNull: false  
+        },
+        guid: { 
+            type: Sequelize.STRING, 
+            field: 'guid',
+            allowNull: false  
         }
     },{ tableName: 'Titulo' }
 );
@@ -315,11 +320,16 @@ app.post('/api/obterTarefas', function (req, res) {
     });
 });
 
-app.get('/api/obterTitulos', function (req, res) {
+app.post('/api/obterTitulos', function (req, res) {
 
     Titulo
-        .findAll()
+        .findAll({where:{guid:req.body.guid}})
         .then( function obterRecorrenciasNew (tits) {
+
+        	console.log('************** tits');
+        	console.log(JSON.stringify(tits));
+        	console.log(req.body.guid);
+        	console.log('************** tits');
             res.json({ sucesso: true, mensagem: "Titulos obtidos", objeto: { titulos: tits } });
         });
 });

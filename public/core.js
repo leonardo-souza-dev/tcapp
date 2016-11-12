@@ -64,7 +64,7 @@
 
 		
 
-		$http.get('/api/obterTitulos')
+		$http.post('/api/obterTitulos', {guid: gGuid})
 			.then(function(response){
 				
 				$scope.titulos =  response.data.objeto.titulos;
@@ -99,9 +99,7 @@
 
 
 
-		$scope.mostraGuid = function(){
-			$scope.guid = guid;
-		};
+		$scope.guid = gGuid;
 
 
 

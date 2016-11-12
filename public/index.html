@@ -20,10 +20,11 @@
 
 	<body ng-controller="mainController" >
 
-		<input type="button" value="mostra guid" ng-click="mostraGuid()" />
-		<p>{{guid}}</p>
+		<!-- 77198681-6cce-4d9f-9ae8-dcdb5162b49c<input type="button" value="mostra guid" ng-click="mostraGuid()" /> -->
+		<p>{{guid}}</p><p>{{guid.length}}</p>
+		
 		<script type="text/javascript">
-	        var guid = Android.getGuid();
+	        var gGuid = Android.getGuid();
 
 		</script>
 
